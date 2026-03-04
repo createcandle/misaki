@@ -10,7 +10,7 @@ import re
 import spacy
 import unicodedata
 from transformers import BartForConditionalGeneration
-import torch
+
 
 def merge_tokens(tokens: List[MToken], unk: Optional[str] = None) -> MToken:
     stress = {tk._.stress for tk in tokens if tk._.stress is not None}
@@ -496,7 +496,7 @@ class Lexicon:
 
 class FallbackNetwork:
     def __init__(self, british):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = "cpu"
         self.model = BartForConditionalGeneration.from_pretrained(
             "PeterReid/graphemes_to_phonemes_en_" + ("gb" if british else "us"))
         self.model.to(self.device)
@@ -511,12 +511,13 @@ class FallbackNetwork:
         return "".join([self.token_to_phoneme.get(t, '') for t in tokens if t > 3])
 
     def __call__(self, input_token):
-        input_ids = torch.tensor([self.graphemes_to_tokens(input_token.text)], device = self.device)
+        #input_ids = torch.tensor([self.graphemes_to_tokens(input_token.text)], device = self.device)
 
-        with torch.no_grad():
-            generated_ids = self.model.generate(input_ids = input_ids)
-        output_text = self.tokens_to_phonemes(generated_ids[0].tolist())
-        return (output_text, 1)
+        #with torch.no_grad():
+        #    generated_ids = self.model.generate(input_ids = input_ids)
+        #output_text = self.tokens_to_phonemes(generated_ids[0].tolist())
+        #return (output_text, 1)
+        return 'misaki error'
 
 class G2P:
     def __init__(self, version=None, trf=False, british=False, fallback=None, unk='❓'):
@@ -528,7 +529,7 @@ class G2P:
         components = ['transformer' if trf else 'tok2vec', 'tagger']
         self.nlp = spacy.load(name, enable=components)
         self.lexicon = Lexicon(british)
-        self.fallback = fallback if fallback else FallbackNetwork(british)
+        self.fallback = None #fallback if fallback else FallbackNetwork(british)
         self.unk = unk
 
     @staticmethod
