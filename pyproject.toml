@@ -21,12 +21,12 @@ dependencies = [
     "pip>=25.0.1", 
     # ^ Spacy needs pip within Python, uv lacks pip by default
     "regex",
-    "num2words", 
-    "spacy", 
-    "spacy-curated-transformers", 
-    "phonemizer-fork", 
-    "espeakng-loader", 
-    "transformers"
+    #"num2words", 
+    #"spacy", 
+    #"spacy-curated-transformers", 
+    #"phonemizer-fork", 
+    #"espeakng-loader", 
+    #"transformers"
 ]
 
 [project.optional-dependencies]
